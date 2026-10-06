@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>アイリスト給与診断</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Noto Sans JP",
+    sans-serif;
+  background:#f5f5f5;
+  color:#222;
+}
+
+.container{
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  background:white;
+}
+
+/* ==========================
+   Instagram広告風 ヘッダー
+========================== */
+
+.header{
+  background:linear-gradient(
+    135deg,
+    #111111 0%,
+    #292929 100%
+  );
+
+  color:white;
+
+  padding:48px 24px 42px;
+
+  text-align:left;
+
+  position:relative;
+
+  overflow:hidden;
+}
+
+.header::after{
+  content:"";
+
+  position:absolute;
+
+  width:180px;
+  height:180px;
+
+  border-radius:50%;
+
+  background:rgba(216,168,91,0.15);
+
+  right:-60px;
+  top:-50px;
+}
+
+.header .small{
+  font-size:12px;
+
+  letter-spacing:2px;
+
+  margin-bottom:18px;
+
+  color:#d8a85b;
+
+  font-weight:bold;
+
+  position:relative;
+  z-index:2;
+}
+
+.header h1{
+  font-size:32px;
+
+  line-height:1.35;
+
+  margin:0;
+
+  font-weight:800;
+
+  letter-spacing:-1px;
+
+  position:relative;
+  z-index:2;
+}
+
+.header h1 span{
+  color:#d8a85b;
+}
+
+/* メイン */
+
+.main{
+  padding:28px 22px 40px;
+  background:#fff;
+}
+
+.progress{
+  font-size:13px;
+  color:#777;
+  margin-bottom:8px;
+}
+
+.question-number{
+  display:inline-block;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  letter-spacing:2px;
+
+  color:#fff;
+
+  background:#111;
+
+  padding:7px 10px;
+
+  border-radius:20px;
+
+  margin-bottom:14px;
+}
+
+.question{
+  font-size:22px;
+  font-weight:bold;
+  line-height:1.5;
+  margin-bottom:20px;
+}
+
+/* 選択肢 */
+
+.option{
+  display:block;
+
+  width:100%;
+
+  padding:18px 18px;
+
+  margin-bottom:11px;
+
+  border:1px solid #e5e5e5;
+
+  border-radius:12px;
+
+  background:#fff;
+
+  text-align:left;
+
+  font-size:15px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:0.2s;
+
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+
+.option:hover{
+  border-color:#111;
+
+  transform:translateY(-1px);
+
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.option.selected{
+  background:#111;
+
+  color:white;
+
+  border-color:#111;
+
+  box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+.option:hover{
+  border-color:#111;
+  background:#fafafa;
+}
+
+.option.selected{
+  background:#111;
+  color:white;
+  border-color:#111;
+}
+
+/* ボタン */
+
+.next-button{
+  width:100%;
+
+  margin-top:14px;
+
+  padding:18px;
+
+  border:0;
+
+  border-radius:12px;
+
+  background:#111;
+
+  color:white;
+
+  font-size:16px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+.next-button:disabled{
+  background:#d5d5d5;
+
+  color:#999;
+
+  box-shadow:none;
+
+  cursor:not-allowed;
+}
+
+.next-button:disabled{
+  background:#ccc;
+}
+
+/* 結果 */
+
+.result{
+  display:none;
+}
+
+.result-label{
+  font-size:13px;
+  letter-spacing:2px;
+  color:#b3833f;
+  font-weight:bold;
+}
+
+.result h2{
+  font-size:28px;
+  line-height:1.5;
+  margin:10px 0 20px;
+}
+
+.score-box{
+  background:#f7f3ed;
+  padding:24px;
+  border-radius:12px;
+  margin-bottom:20px;
+}
+
+.score-title{
+  font-size:14px;
+  color:#666;
+}
+
+.score{
+  font-size:48px;
+  font-weight:bold;
+  margin:5px 0;
+}
+
+.score span{
+  font-size:18px;
+}
+
+.result-text{
+  font-size:15px;
+  line-height:1.8;
+}
+
+.cta{
+  margin-top:25px;
+  padding:20px;
+  background:#111;
+  color:white;
+  border-radius:12px;
+}
+
+.cta h3{
+  margin-top:0;
+}
+
+.cta p{
+  font-size:14px;
+  line-height:1.7;
+}
+
+.cta-button{
+  display:block;
+  text-align:center;
+  background:#d8a85b;
+  color:white;
+  padding:15px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:bold;
+  margin-top:15px;
+}
+
+.retry{
+  text-align:center;
+  margin-top:20px;
+  color:#777;
+  cursor:pointer;
+  font-size:14px;
+}
+/* ==========================
+   スタート画面
+========================== */
+
+.start-screen{
+  padding:42px 24px 35px;
+  text-align:center;
+}
+
+.start-label{
+  display:inline-block;
+
+  background:#111;
+  color:white;
+
+  padding:8px 14px;
+
+  border-radius:30px;
+
+  font-size:12px;
+
+  font-weight:bold;
+
+  letter-spacing:1px;
+
+  margin-bottom:22px;
+}
+
+.start-screen h2{
+  font-size:32px;
+
+  line-height:1.4;
+
+  margin:0;
+
+  font-weight:900;
+
+  letter-spacing:-1px;
+}
+
+.start-screen h2 span{
+  color:#b3833f;
+}
+
+.start-subtitle{
+  margin:18px 0 0;
+
+  font-size:14px;
+
+  font-weight:bold;
+
+  letter-spacing:1px;
+
+  color:#666;
+}
+
+.three-minutes{
+  display:inline-block;
+
+  margin:22px 0;
+
+  padding:10px 20px;
+
+  border-radius:30px;
+
+  background:#f7f1e8;
+
+  color:#9a6d32;
+
+  font-size:15px;
+
+  font-weight:800;
+}
+
+.start-description{
+  font-size:14px;
+
+  line-height:1.9;
+
+  color:#555;
+
+  margin:5px 0 25px;
+}
+
+.start-button{
+  width:100%;
+
+  padding:19px;
+
+  border:0;
+
+  border-radius:13px;
+
+  background:#111;
+
+  color:white;
+
+  font-size:16px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(0,0,0,0.18);
+}
+
+.start-button:hover{
+  transform:translateY(-2px);
+
+  box-shadow:0 12px 25px rgba(0,0,0,0.22);
+}
+
+.check-list{
+  margin-top:28px;
+
+  padding:20px;
+
+  background:#f8f8f8;
+
+  border-radius:12px;
+
+  text-align:left;
+
+  font-size:13px;
+
+  line-height:2;
+}
+
+.check-list div{
+  border-bottom:1px solid #e5e5e5;
+
+  padding:3px 0;
+}
+
+.check-list div:last-child{
+  border-bottom:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="small">EYELIST CAREER CHECK</div>
+
+    <h1>
+      あなたの経験、<br>
+      <span>いくらで評価される？</span>
+    </h1>
+  </div>
+
+
+  <div class="main">
+
+    <!-- 診断画面 -->
+
+    <div id="startScreen" class="start-screen">
+
+  <div class="start-label">
+    アイリスト歴3年以上の方へ
+  </div>
+
+  <h2>
+    あなたの経験、<br>
+    <span>いくらで評価される？</span>
+  </h2>
+
+  <p class="start-subtitle">
+    給与 × 売上 × 休日 × 勤務時間
+  </p>
+
+  <div class="three-minutes">
+    たった3分
+  </div>
+
+  <p class="start-description">
+    転職するかは、まだ決めなくてOK。<br>
+    まずは今のあなたの<br>
+    「キャリア評価」をチェックしてみませんか？
+  </p>
+
+  <button
+    class="start-button"
+    onclick="startDiagnosis()">
+    無料で診断してみる
+  </button>
+
+  <div class="check-list">
+
+    <div>✓ アイリスト経験年数</div>
+    <div>✓ 現在の月収</div>
+    <div>✓ 月の技術売上</div>
+    <div>✓ 月の休日数</div>
+    <div>✓ 1日の勤務時間</div>
+    <div>✓ 現在の働き方</div>
+
+  </div>
+
+</div>
+    <div id="quiz">
+
+      <div class="progress">
+        <span id="progress">1</span> / 6
+      </div>
+
+      <div class="question-number">
+        QUESTION
+      </div>
+
+      <div id="question" class="question"></div>
+
+      <div id="options"></div>
+
+      <button
+        id="nextButton"
+        class="next-button"
+        disabled>
+        次へ
+      </button>
+
+    </div>
+
+
+    <!-- 結果画面 -->
+
+    <div id="result" class="result">
+
+      <div class="result-label">
+        YOUR RESULT
+      </div>
+
+      <h2 id="resultTitle"></h2>
+
+      <div class="score-box">
+
+        <div class="score-title">
+          あなたのキャリア評価スコア
+        </div>
+
+        <div class="score">
+          <span id="score"></span>
+          <span>/100</span>
+        </div>
+
+      </div>
+
+      <div id="resultText" class="result-text"></div>
+
+
+      <div class="cta">
+
+        <h3>
+          もっと具体的に知りたい方へ
+        </h3>
+
+        <p>
+          「今の経験なら、那覇新都心で
+          どんな働き方・給与条件が考えられる？」
+          という相談もできます。
+        </p>
+
+        <a
+          href="https://makea-recruit.com/lp2025/"
+          class="cta-button"
+          target="_blank"
+          rel="noopener noreferrer">
+          情報をみる
+        </a>
+
+      </div>
+
+      <div
+        class="retry"
+        onclick="location.reload()">
+        もう一度診断する
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* ==========================
+   診断データ
+========================== */
+
+const questions = [
+
+{
+  question:"アイリストとしての経験年数は？",
+  options:[
+    {text:"3〜4年", score:10},
+    {text:"5〜6年", score:15},
+    {text:"7〜9年", score:20},
+    {text:"10年以上", score:25}
+  ]
+},
+
+{
+  question:"現在の月収（税込・総支給）は？",
+  options:[
+    {text:"20万円未満", score:5},
+    {text:"20〜25万円", score:8},
+    {text:"25〜30万円", score:12},
+    {text:"30〜35万円", score:15},
+    {text:"35〜40万円", score:18},
+    {text:"40万円以上", score:20}
+  ]
+},
+
+{
+  question:"月の技術売上はどのくらい？",
+  options:[
+    {text:"50万円未満", score:5},
+    {text:"50〜70万円", score:8},
+    {text:"70〜90万円", score:12},
+    {text:"90〜110万円", score:16},
+    {text:"110万円以上", score:20},
+    {text:"分からない", score:8}
+  ]
+},
+
+{
+  question:"月の休みは何日くらい？",
+  options:[
+    {text:"6日以下", score:5},
+    {text:"7〜8日", score:8},
+    {text:"9〜10日", score:12},
+    {text:"11日以上", score:15}
+  ]
+},
+
+{
+  question:"1日の平均勤務時間は？",
+  options:[
+    {text:"7時間未満", score:15},
+    {text:"7〜8時間", score:13},
+    {text:"8〜9時間", score:8},
+    {text:"9時間以上", score:3}
+  ]
+},
+
+{
+  question:"現在の働き方は？",
+  options:[
+    {text:"正社員", score:10},
+    {text:"パート・アルバイト", score:8},
+    {text:"業務委託", score:9},
+    {text:"その他", score:5}
+  ]
+}
+
+];
+
+
+/* ==========================
+   初期設定
+========================== */
+
+let currentQuestion = 0;
+let totalScore = 0;
+let selectedScore = null;
+document.getElementById("quiz").style.display = "none";
+function startDiagnosis(){
+
+  document.getElementById("startScreen")
+    .style.display = "none";
+
+  document.getElementById("quiz")
+    .style.display = "block";
+}
+
+
+/* ==========================
+   問題表示
+========================== */
+
+function showQuestion(){
+
+  const q = questions[currentQuestion];
+
+  document.getElementById("progress").textContent =
+    currentQuestion + 1;
+
+  document.getElementById("question").textContent =
+    q.question;
+
+  const options =
+    document.getElementById("options");
+
+  options.innerHTML = "";
+
+  selectedScore = null;
+
+  document.getElementById("nextButton").disabled = true;
+
+
+  q.options.forEach((option,index)=>{
+
+    const button =
+      document.createElement("button");
+
+    button.className = "option";
+
+    button.textContent = option.text;
+
+    button.onclick = function(){
+
+      document
+        .querySelectorAll(".option")
+        .forEach(btn =>
+          btn.classList.remove("selected")
+        );
+
+      button.classList.add("selected");
+
+      selectedScore = option.score;
+
+      document.getElementById("nextButton")
+        .disabled = false;
+
+    };
+
+    options.appendChild(button);
+
+  });
+
+}
+
+
+/* ==========================
+   次へ
+========================== */
+
+document.getElementById("nextButton")
+  .addEventListener("click",()=>{
+
+    totalScore += selectedScore;
+
+    currentQuestion++;
+
+    if(currentQuestion < questions.length){
+
+      showQuestion();
+
+    }else{
+
+      showResult();
+
+    }
+
+  });
+
+
+/* ==========================
+   結果
+========================== */
+
+function showResult(){
+
+  document.getElementById("quiz")
+    .style.display = "none";
+
+  document.getElementById("result")
+    .style.display = "block";
+
+
+  let title = "";
+  let text = "";
+
+
+  if(totalScore >= 80){
+
+    title =
+      "経験・売上ともに<br>高く評価できる可能性があります";
+
+    text =
+      "これまで積み上げてきた経験や売上に対して、現在の給与・働き方が十分に見合っているか、一度確認してみる価値があります。";
+
+  }
+
+  else if(totalScore >= 60){
+
+    title =
+      "経験をもっと<br>給与に反映できる可能性があります";
+
+    text =
+      "美容師としての経験や実績を考えると、現在の条件だけではなく「売上に対してどれくらい給与へ還元されているか」を確認することがポイントです。";
+
+  }
+
+  else{
+
+    title =
+      "今後の働き方次第で<br>条件を変えられる可能性があります";
+
+    text =
+      "現在の条件だけで判断せず、休日・勤務時間・売上・給与をまとめて比較すると、自分に合った働き方が見つかる可能性があります。";
+
+  }
+
+
+  document.getElementById("resultTitle")
+    .innerHTML = title;
+
+  document.getElementById("score")
+    .textContent = totalScore;
+
+  document.getElementById("resultText")
+    .textContent = text;
+
+}
+
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
